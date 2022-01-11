@@ -27,8 +27,7 @@ option = st.selectbox("What dataset would you like to explore?",("Training","Tes
 st.write('You selected:', option)
 
 
-
-def ageHistorgram(age):
+def ageHistogram(age):
     ageCount = []
     ageUnique = age.unique()
     age = age.tolist()
@@ -44,16 +43,43 @@ def ageHistorgram(age):
     c = alt.Chart(ageCount).mark_bar().encode(x='Age',y='Frequency')
     st.altair_chart(c, use_container_width=True)
 
+# Country Frequency Mapping
+def nationHistogram(nations):
+    nationsCount = []
+    nationUnique = nations.unique()
+    nations = nations.tolist()
+    nationUnique = nationUnique.tolist()
+    for i in range(len(nationUnique)):
+        occurrences = nations.count(nationUnique[i])
+        nationsCount.append([nationUnique[i], occurrences])
+    nationsCount = pd.DataFrame(nationsCount, columns=['Nations', 'Frequency'])
+    nationsCount = nationsCount.sort_values("Frequency")
+    c = alt.Chart(nationsCount).mark_bar().encode(x='Nations',y='Frequency')
+    st.altair_chart(c, use_container_width=True)
 
+def marriageHistogram(marriage):
+    marriageCount = []
+    marriageUnique = marriage.unique()
+    marriage = marriage.tolist()
+    marriageUnique = marriageUnique.tolist()
+    for i in range(len(marriageUnique)):
+        occurrences = marriage.count(marriageUnique[i])
+        marriageCount.append([marriageUnique[i], occurrences])
+    marriageCount = pd.DataFrame(marriageCount, columns=['Relationship Status', 'Frequency'])
+    marriageCount = marriageCount.sort_values("Frequency")
+    c = alt.Chart(marriageCount).mark_bar().encode(x='Relationship Status',y='Frequency')
+    st.altair_chart(c, use_container_width=True)
+
+    
 if option == "Training":
     st.write(trainingDF) 
-    ageHistorgram(trainingDF["age"])
+    ageHistogram(trainingDF["age"])
+    nationHistogram(trainingDF["country"])
+    marriageHistogram(trainingDF["married"])
 
 
 if option == "Test":
     st.write(testDF)
-    ageHistorgram(testDF["age"])
-
-
-
-# Country Frequency Mapping
+    ageHistogram(testDF["age"])
+    nationHistogram(testDF["country"])
+    marriageHistogram(trainingDF["married"])
