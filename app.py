@@ -31,7 +31,6 @@ def ageHistogram(age):
     ageCount = []
     ageUnique = age.unique()
     age = age.tolist()
-    print(type(ageUnique))
     ageUnique = ageUnique.tolist()
     for i in range(len(ageUnique)):
         occurrences = age.count(ageUnique[i])
