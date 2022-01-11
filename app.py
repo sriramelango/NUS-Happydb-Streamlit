@@ -70,16 +70,32 @@ def marriageHistogram(marriage):
     c = alt.Chart(marriageCount).mark_bar().encode(x='Relationship Status',y='Frequency')
     st.altair_chart(c, use_container_width=True)
 
-    
+
+def durationHistogram(duration):
+    durationCount = []
+    durationUnique = duration.unique()
+    duration = duration.tolist()
+    durationUnique = durationUnique.tolist()
+    for i in range(len(durationUnique)):
+        occurrences = duration.count(durationUnique[i])
+        durationCount.append([durationUnique[i], occurrences])
+    durationCount = pd.DataFrame(durationCount, columns=['Duration', 'Frequency'])
+    durationCount = durationCount.sort_values("Frequency")
+    c = alt.Chart(durationCount).mark_bar().encode(x='Duration',y='Frequency')
+    st.altair_chart(c, use_container_width=True)  
+
+
 if option == "Training":
     st.write(trainingDF) 
     ageHistogram(trainingDF["age"])
     nationHistogram(trainingDF["country"])
     marriageHistogram(trainingDF["married"])
+    durationHistogram(trainingDF["duration"])
 
 
 if option == "Test":
     st.write(testDF)
     ageHistogram(testDF["age"])
     nationHistogram(testDF["country"])
-    marriageHistogram(trainingDF["married"])
+    marriageHistogram(testDF["married"])
+    durationHistogram(testDF["duration"])
