@@ -41,10 +41,7 @@ def ageHistorgram(age):
     ageCount = ageCount.sort_values("Age")
     ageCount = ageCount[ageCount['Age'] > 16]
     ageCount = ageCount[ageCount['Age'] < 100]
-    c = alt.Chart(ageCount).mark_bar().encode(
-    x='Age',
-    y='Frequency'
-    )
+    c = alt.Chart(ageCount).mark_bar().encode(x='Age',y='Frequency')
     st.altair_chart(c, use_container_width=True)
 
 
