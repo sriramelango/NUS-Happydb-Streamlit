@@ -15,6 +15,7 @@ testDF = pd.read_csv("./data/labeledDataTest.csv",sep=",",encoding = 'cp1252')
 trainingDF = normalizeData(trainingDF)
 testDF = normalizeData(testDF)
 
+st.set_page_config(page_title="CL-Aff Shared Task - In Pursuit of Happiness", layout="wide")
 
 st.title("CL-Aff Shared Task - In Pursuit of Happiness")
 st.markdown("""
@@ -53,6 +54,7 @@ def nationHistogram(nations):
         nationsCount.append([nationUnique[i], occurrences])
     nationsCount = pd.DataFrame(nationsCount, columns=['Nations', 'Frequency'])
     nationsCount = nationsCount.sort_values("Frequency")
+    nationsCount = nationsCount.dropna()
     c = alt.Chart(nationsCount).mark_bar().encode(x='Nations',y='Frequency')
     st.altair_chart(c, use_container_width=True)
 
@@ -65,7 +67,7 @@ def marriageHistogram(marriage):
         occurrences = marriage.count(marriageUnique[i])
         marriageCount.append([marriageUnique[i], occurrences])
     marriageCount = pd.DataFrame(marriageCount, columns=['Relationship Status', 'Frequency'])
-    marriageCount = marriageCount.sort_values("Frequency")
+    marriageCount = marriageCount.dropna()
     c = alt.Chart(marriageCount).mark_bar().encode(x='Relationship Status',y='Frequency')
     st.altair_chart(c, use_container_width=True)
 
@@ -79,22 +81,72 @@ def durationHistogram(duration):
         occurrences = duration.count(durationUnique[i])
         durationCount.append([durationUnique[i], occurrences])
     durationCount = pd.DataFrame(durationCount, columns=['Duration', 'Frequency'])
-    durationCount = durationCount.sort_values("Frequency")
+    durationCount = durationCount.dropna()
     c = alt.Chart(durationCount).mark_bar().encode(x='Duration',y='Frequency')
     st.altair_chart(c, use_container_width=True)  
+
+def genderHistorgram(gender):
+    genderCount = []
+    genderUnique = gender.unique()
+    gender = gender.tolist()
+    genderUnique = genderUnique.tolist()
+    for i in range(len(genderUnique)):
+        occurrences = gender.count(genderUnique[i])
+        genderCount.append([genderUnique[i], occurrences])
+    genderCount = pd.DataFrame(genderCount, columns=['Gender', 'Frequency'])
+    genderCount = genderCount.dropna()
+    c = alt.Chart(genderCount).mark_bar().encode(x='Gender',y='Frequency')
+    st.altair_chart(c, use_container_width=True)     
+
+def parentHoodHistogram(parent):
+    parentCount = []
+    parentUnique = parent.unique()
+    parent = parent.tolist()
+    parentUnique = parentUnique.tolist()
+    for i in range(len(parentUnique)):
+        occurrences = parent.count(parentUnique[i])
+        parentCount.append([parentUnique[i], occurrences])
+    parentCount = pd.DataFrame(parentCount, columns=['Parenthood', 'Frequency'])
+    parentCount = parentCount.dropna()
+    c = alt.Chart(parentCount).mark_bar().encode(x='Parenthood',y='Frequency')
+    st.altair_chart(c, use_container_width=True)     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 if option == "Training":
     st.write(trainingDF) 
+    st.title('Demographics')
     ageHistogram(trainingDF["age"])
     nationHistogram(trainingDF["country"])
     marriageHistogram(trainingDF["married"])
     durationHistogram(trainingDF["duration"])
+    genderHistorgram(trainingDF["gender"])
+    parentHoodHistogram(trainingDF["parenthood"])
+    st.title('Demographics')
 
 
 if option == "Test":
     st.write(testDF)
+    st.title('Demographics')
     ageHistogram(testDF["age"])
     nationHistogram(testDF["country"])
     marriageHistogram(testDF["married"])
     durationHistogram(testDF["duration"])
+    genderHistorgram(testDF["gender"])
+    parentHoodHistogram(testDF["parenthood"])
