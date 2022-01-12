@@ -37,6 +37,7 @@ def dataHistogramProcess(data,xlabel,ylabel):
         occurrences = data.count(ageUnique[i])
         dataFiltered.append([ageUnique[i], occurrences])
     dataFiltered = pd.DataFrame(dataFiltered, columns=[xlabel, ylabel])
+    dataFiltered = dataFiltered.dropna()
     return dataFiltered
 
 def ageHistogram(age):
@@ -44,64 +45,40 @@ def ageHistogram(age):
     ageData = ageData.sort_values("Age")
     ageData = ageData[ageData['Age'] > 16]
     ageData = ageData[ageData['Age'] < 100]
-    c = alt.Chart(ageData).mark_bar().encode(x='Age',y='Frequency')
+    c = alt.Chart(ageData).mark_bar().encode(x='Age',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)
 
 # Country Frequency Mapping
 def nationHistogram(nations):
     nationData = dataHistogramProcess(nations, 'Nations', 'Frequency')
-    c = alt.Chart(nationData).mark_bar().encode(x='Nations',y='Frequency')
+    c = alt.Chart(nationData).mark_bar().encode(x='Nations',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)
 
 def marriageHistogram(marriage):
     marriageData = dataHistogramProcess(marriage, 'Relationship Status', 'Frequency')
-    c = alt.Chart(marriageData).mark_bar().encode(x='Relationship Status',y='Frequency')
+    c = alt.Chart(marriageData).mark_bar().encode(x='Relationship Status',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)
 
 def durationHistogram(duration):
-    durationCount = []
-    durationUnique = duration.unique()
-    duration = duration.tolist()
-    durationUnique = durationUnique.tolist()
-    for i in range(len(durationUnique)):
-        occurrences = duration.count(durationUnique[i])
-        durationCount.append([durationUnique[i], occurrences])
-    durationCount = pd.DataFrame(durationCount, columns=['Duration', 'Frequency'])
-    durationCount = durationCount.dropna()
-    c = alt.Chart(durationCount).mark_bar().encode(x='Duration',y='Frequency')
+    durationData = dataHistogramProcess(duration, 'Duration', 'Frequency')
+    c = alt.Chart(durationData).mark_bar().encode(x='Duration',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)  
 
 def genderHistorgram(gender):
-    genderCount = []
-    genderUnique = gender.unique()
-    gender = gender.tolist()
-    genderUnique = genderUnique.tolist()
-    for i in range(len(genderUnique)):
-        occurrences = gender.count(genderUnique[i])
-        genderCount.append([genderUnique[i], occurrences])
-    genderCount = pd.DataFrame(genderCount, columns=['Gender', 'Frequency'])
-    genderCount = genderCount.dropna()
-    c = alt.Chart(genderCount).mark_bar().encode(x='Gender',y='Frequency')
+    genderData = dataHistogramProcess(gender, 'Gender', 'Frequency')
+    c = alt.Chart(genderData).mark_bar().encode(x='Gender',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)     
 
 def parentHoodHistogram(parent):
-    parentCount = []
-    parentUnique = parent.unique()
-    parent = parent.tolist()
-    parentUnique = parentUnique.tolist()
-    for i in range(len(parentUnique)):
-        occurrences = parent.count(parentUnique[i])
-        parentCount.append([parentUnique[i], occurrences])
-    parentCount = pd.DataFrame(parentCount, columns=['Parenthood', 'Frequency'])
-    parentCount = parentCount.dropna()
-    c = alt.Chart(parentCount).mark_bar().encode(x='Parenthood',y='Frequency')
+    parentData = dataHistogramProcess(parent, 'Parenthood', 'Frequency')
+    c = alt.Chart(parentData).mark_bar().encode(x='Parenthood',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)     
 
-
-
+#def emotionHistorgram()
 
 def demographicViewer(country, data):
     countryDataset = data[data["country"] == country]
+    
 
 
 
