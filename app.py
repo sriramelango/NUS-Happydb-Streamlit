@@ -29,7 +29,7 @@ def ageHistogram(age):
     c = alt.Chart(ageData).mark_bar().encode(x='Age',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)
 
-# Country Frequency Mapping
+# Country Frequency Mapping - NEED TO CHANGE TO GRAPHING BASED ON MAPS(HEAT MAP)
 def nationHistogram(nations):
     nationData = dataHistogramProcess(nations, 'Nations', 'Frequency')
     c = alt.Chart(nationData).mark_bar().encode(x='Nations',y='Frequency').interactive()
