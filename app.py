@@ -28,49 +28,35 @@ option = st.selectbox("What dataset would you like to explore?",("Training","Tes
 st.write('You selected:', option)
 
 
-def ageHistogram(age):
-    ageCount = []
-    ageUnique = age.unique()
-    age = age.tolist()
-    ageUnique = ageUnique.tolist()
+def dataHistogramProcess(data,xlabel,ylabel):
+    dataFiltered = []
+    dataUnique = data.unique()
+    data = data.tolist()
+    ageUnique = dataUnique.tolist()
     for i in range(len(ageUnique)):
-        occurrences = age.count(ageUnique[i])
-        ageCount.append([ageUnique[i], occurrences])
-    ageCount = pd.DataFrame(ageCount, columns=['Age', 'Frequency'])
-    ageCount = ageCount.sort_values("Age")
-    ageCount = ageCount[ageCount['Age'] > 16]
-    ageCount = ageCount[ageCount['Age'] < 100]
-    c = alt.Chart(ageCount).mark_bar().encode(x='Age',y='Frequency')
+        occurrences = data.count(ageUnique[i])
+        dataFiltered.append([ageUnique[i], occurrences])
+    dataFiltered = pd.DataFrame(dataFiltered, columns=[xlabel, ylabel])
+    return dataFiltered
+
+def ageHistogram(age):
+    ageData = dataHistogramProcess(age, 'Age', 'Frequency')
+    ageData = ageData.sort_values("Age")
+    ageData = ageData[ageData['Age'] > 16]
+    ageData = ageData[ageData['Age'] < 100]
+    c = alt.Chart(ageData).mark_bar().encode(x='Age',y='Frequency')
     st.altair_chart(c, use_container_width=True)
 
 # Country Frequency Mapping
 def nationHistogram(nations):
-    nationsCount = []
-    nationUnique = nations.unique()
-    nations = nations.tolist()
-    nationUnique = nationUnique.tolist()
-    for i in range(len(nationUnique)):
-        occurrences = nations.count(nationUnique[i])
-        nationsCount.append([nationUnique[i], occurrences])
-    nationsCount = pd.DataFrame(nationsCount, columns=['Nations', 'Frequency'])
-    nationsCount = nationsCount.sort_values("Frequency")
-    nationsCount = nationsCount.dropna()
-    c = alt.Chart(nationsCount).mark_bar().encode(x='Nations',y='Frequency')
+    nationData = dataHistogramProcess(nations, 'Nations', 'Frequency')
+    c = alt.Chart(nationData).mark_bar().encode(x='Nations',y='Frequency')
     st.altair_chart(c, use_container_width=True)
 
 def marriageHistogram(marriage):
-    marriageCount = []
-    marriageUnique = marriage.unique()
-    marriage = marriage.tolist()
-    marriageUnique = marriageUnique.tolist()
-    for i in range(len(marriageUnique)):
-        occurrences = marriage.count(marriageUnique[i])
-        marriageCount.append([marriageUnique[i], occurrences])
-    marriageCount = pd.DataFrame(marriageCount, columns=['Relationship Status', 'Frequency'])
-    marriageCount = marriageCount.dropna()
-    c = alt.Chart(marriageCount).mark_bar().encode(x='Relationship Status',y='Frequency')
+    marriageData = dataHistogramProcess(marriage, 'Relationship Status', 'Frequency')
+    c = alt.Chart(marriageData).mark_bar().encode(x='Relationship Status',y='Frequency')
     st.altair_chart(c, use_container_width=True)
-
 
 def durationHistogram(duration):
     durationCount = []
@@ -114,6 +100,10 @@ def parentHoodHistogram(parent):
 
 
 
+def demographicViewer(country, data):
+    countryDataset = data[data["country"] == country]
+
+
 
 
 
@@ -132,6 +122,7 @@ def parentHoodHistogram(parent):
 if option == "Training":
     st.write(trainingDF) 
     st.title('Demographics')
+    option = st.selectbox("What nation would you like to explore?",("Training","Test"))
     ageHistogram(trainingDF["age"])
     nationHistogram(trainingDF["country"])
     marriageHistogram(trainingDF["married"])
