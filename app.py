@@ -93,10 +93,10 @@ st.markdown("""
 
 
 #User Interaction
-option = st.selectbox("What dataset would you like to explore?",("Training","Test"))
-st.write('You selected:', option)
+optionDataSet = st.selectbox("What dataset would you like to explore?",("Training","Test"))
+st.write('You selected:', optionDataSet)
 
-if option == "Training":
+if optionDataSet == "Training":
     st.write(trainingDF) 
     st.title('Demographics')
     selectionOptions = pd.DataFrame(trainingDF["country"].unique()).dropna().append(["ALL"])
@@ -112,7 +112,7 @@ if option == "Training":
     else:
         demographicViewer(nation, trainingDF)
 
-if option == "Test":
+if optionDataSet == "Test":
     st.write(testDF) 
     st.title('Demographics')
     selectionOptions = pd.DataFrame(testDF["country"].unique()).dropna().append(["ALL"])
