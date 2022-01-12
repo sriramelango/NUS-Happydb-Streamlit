@@ -4,6 +4,10 @@ import plotly.figure_factory as ff
 import matplotlib.pyplot as plt
 import numpy as np
 import altair as alt
+from PIL import Image
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+
+st.set_option('deprecation.showPyplotGlobalUse', False)
 
 def normalizeData(trainingData):
     trainingData['age'] = pd.to_numeric(trainingData['age'], errors='coerce')
@@ -75,13 +79,24 @@ def demographicViewer(country, data):
     genderHistorgram(countryDataset["gender"])
     parentHoodHistogram(countryDataset["parenthood"])
     emotionHistogram(countryDataset)
+    genWordCloud(countryDataset["moment"])
    
+def genWordCloud(moments):
+    words = ""
+    stopwords = set(STOPWORDS)
+    for index,values in moments.items():
+        words += values
+    wordCloud = WordCloud(background_color = "black", stopwords=stopwords).generate(words) 
+    plt.imshow(wordCloud, interpolation="bilinear") 
+    plt.axis('off') 
+    st.pyplot()
+
 # Obtain and Process Data
 trainingDF = normalizeData(pd.read_csv("./data/labeledDataTrain.csv"))
 testDF = normalizeData(pd.read_csv("./data/labeledDataTest.csv",sep=",",encoding = 'cp1252'))
 
 # Set UI and Interface
-#st.set_page_config(page_title="CL-Aff Shared Task - In Pursuit of Happiness", layout="wide")
+st.set_page_config(page_title="CL-Aff Shared Task - In Pursuit of Happiness", layout="wide")
 
 st.title("CL-Aff Shared Task - In Pursuit of Happiness")
 
@@ -90,7 +105,6 @@ st.markdown("""
 * A part of the AffCon Workshop @ AAAI 2019 for Modeling Affect-in-Action
 * Check out the Workshop and Shared Task website: https://sites.google.com/view/affcon2019/home
 """)
-
 
 #User Interaction
 optionDataSet = st.selectbox("What dataset would you like to explore?",("Training","Test"))
@@ -109,6 +123,7 @@ if optionDataSet == "Training":
         genderHistorgram(trainingDF["gender"])
         parentHoodHistogram(trainingDF["parenthood"])
         emotionHistogram(trainingDF)
+        genWordCloud(trainingDF["moment"])
     else:
         demographicViewer(nation, trainingDF)
 
@@ -125,5 +140,6 @@ if optionDataSet == "Test":
         genderHistorgram(testDF["gender"])
         parentHoodHistogram(testDF["parenthood"])
         emotionHistogram(testDF)
+        genWordCloud(trainingDF["moment"])
     else:
         demographicViewer(nation, testDF)
