@@ -41,8 +41,8 @@ def marriageHistogram(marriage):
     st.altair_chart(c, use_container_width=True)
 
 def durationHistogram(duration):
-    durationData = dataHistogramProcess(duration, 'Duration', 'Frequency')
-    c = alt.Chart(durationData).mark_bar().encode(x='Duration',y='Frequency').interactive()
+    durationData = dataHistogramProcess(duration, 'Duration of Happiness', 'Frequency')
+    c = alt.Chart(durationData).mark_bar().encode(x='Duration of Happiness',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)  
 
 def genderHistorgram(gender):
@@ -51,8 +51,8 @@ def genderHistorgram(gender):
     st.altair_chart(c, use_container_width=True)     
 
 def parentHoodHistogram(parent):
-    parentData = dataHistogramProcess(parent, 'Parenthood', 'Frequency')
-    c = alt.Chart(parentData).mark_bar().encode(x='Parenthood',y='Frequency').interactive()
+    parentData = dataHistogramProcess(parent, 'Parenthood Status', 'Frequency')
+    c = alt.Chart(parentData).mark_bar().encode(x='Parenthood Status',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)     
 
 def emotionHistogram(data):
