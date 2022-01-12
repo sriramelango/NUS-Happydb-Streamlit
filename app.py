@@ -81,7 +81,7 @@ trainingDF = normalizeData(pd.read_csv("./data/labeledDataTrain.csv"))
 testDF = normalizeData(pd.read_csv("./data/labeledDataTest.csv",sep=",",encoding = 'cp1252'))
 
 # Set UI and Interface
-st.set_page_config(page_title="CL-Aff Shared Task - In Pursuit of Happiness", layout="wide")
+#st.set_page_config(page_title="CL-Aff Shared Task - In Pursuit of Happiness", layout="wide")
 
 st.title("CL-Aff Shared Task - In Pursuit of Happiness")
 
