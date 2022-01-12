@@ -91,6 +91,7 @@ st.markdown("""
 * Check out the Workshop and Shared Task website: https://sites.google.com/view/affcon2019/home
 """)
 
+col1, col2 = st.columns(2)
 
 #User Interaction
 option = st.selectbox("What dataset would you like to explore?",("Training","Test"))
@@ -102,13 +103,15 @@ if option == "Training":
     selectionOptions = pd.DataFrame(trainingDF["country"].unique()).dropna().append(["ALL"])
     nation = st.selectbox("Where would you like to explore?", selectionOptions)
     if nation == "ALL":
+        with col1:
+            nationHistogram(trainingDF["country"])
+            marriageHistogram(trainingDF["married"])
+            durationHistogram(trainingDF["duration"])
+        with col2:
+            genderHistorgram(trainingDF["gender"])
+            parentHoodHistogram(trainingDF["parenthood"])
+            emotionHistogram(trainingDF)
         ageHistogram(trainingDF["age"])
-        nationHistogram(trainingDF["country"])
-        marriageHistogram(trainingDF["married"])
-        durationHistogram(trainingDF["duration"])
-        genderHistorgram(trainingDF["gender"])
-        parentHoodHistogram(trainingDF["parenthood"])
-        emotionHistogram(trainingDF)
     else:
         demographicViewer(nation, trainingDF)
 
