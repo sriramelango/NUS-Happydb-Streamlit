@@ -74,10 +74,29 @@ def parentHoodHistogram(parent):
     c = alt.Chart(parentData).mark_bar().encode(x='Parenthood',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)     
 
-#def emotionHistorgram()
+def emotionHistogram(data):
+    agencyData = data['agency']
+    agencyData = agencyData.tolist()
+    agencyOccurances = agencyData.count("yes")
+    socialData = data['social']
+    socialData = socialData.tolist()
+    socialOccurances = agencyData.count("yes")
+    emotionalFrequency = {'Labels' : ["Agency","Social"], "Frequency": [agencyOccurances, socialOccurances]}
+    emotionalFrequency = pd.DataFrame(emotionalFrequency)
+    c = alt.Chart(emotionalFrequency).mark_bar().encode(x='Labels',y='Frequency').interactive()
+    st.altair_chart(c, use_container_width=True)
+
+
 
 def demographicViewer(country, data):
     countryDataset = data[data["country"] == country]
+    ageHistogram(countryDataset["age"])
+    marriageHistogram(countryDataset["married"])
+    durationHistogram(countryDataset["duration"])
+    genderHistorgram(countryDataset["gender"])
+    parentHoodHistogram(countryDataset["parenthood"])
+    emotionHistogram(countryDataset)
+
     
 
 
@@ -100,21 +119,36 @@ if option == "Training":
     st.write(trainingDF) 
     st.title('Demographics')
     option = st.selectbox("What nation would you like to explore?",("Training","Test"))
+
+
+
+
+
+
+
+
     ageHistogram(trainingDF["age"])
     nationHistogram(trainingDF["country"])
     marriageHistogram(trainingDF["married"])
     durationHistogram(trainingDF["duration"])
     genderHistorgram(trainingDF["gender"])
     parentHoodHistogram(trainingDF["parenthood"])
+    emotionHistogram(trainingDF)
     st.title('Demographics')
 
 
 if option == "Test":
     st.write(testDF)
     st.title('Demographics')
+
+
+
+
+    
     ageHistogram(testDF["age"])
     nationHistogram(testDF["country"])
     marriageHistogram(testDF["married"])
     durationHistogram(testDF["duration"])
     genderHistorgram(testDF["gender"])
     parentHoodHistogram(testDF["parenthood"])
+    emotionHistogram(testDF)
