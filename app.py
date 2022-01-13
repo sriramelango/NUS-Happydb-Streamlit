@@ -71,6 +71,16 @@ def emotionHistogram(data):
     c = alt.Chart(emotionalFrequency).mark_bar().encode(x='Labels',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)
 
+def conceptHistogram(concepts):
+    conceptsArray = " "
+    for index, values in concepts.items():
+        conceptsArray += values + " "
+    conceptsArray = conceptsArray.replace("|"," ")
+    conceptsArray = pd.Series(conceptsArray.split())
+    conceptsData = dataHistogramProcess(conceptsArray, 'Concepts', 'Frequency')
+    c = alt.Chart(conceptsData).mark_bar().encode(x='Concepts',y='Frequency').interactive()
+    st.altair_chart(c, use_container_width=True)     
+
 def demographicViewer(country, data):
     countryDataset = data[data["country"] == country]
     ageHistogram(countryDataset["age"])
@@ -79,13 +89,14 @@ def demographicViewer(country, data):
     genderHistorgram(countryDataset["gender"])
     parentHoodHistogram(countryDataset["parenthood"])
     emotionHistogram(countryDataset)
+    conceptHistogram(countryDataset["concepts"])
     genWordCloud(countryDataset["moment"])
    
 def genWordCloud(moments):
     words = ""
     stopwords = set(STOPWORDS)
     for index,values in moments.items():
-        words += values
+        words += values + " "
     wordCloud = WordCloud(background_color = "black", stopwords=stopwords).generate(words) 
     plt.imshow(wordCloud, interpolation="bilinear") 
     plt.axis('off') 
@@ -96,7 +107,7 @@ trainingDF = normalizeData(pd.read_csv("./data/labeledDataTrain.csv"))
 testDF = normalizeData(pd.read_csv("./data/labeledDataTest.csv",sep=",",encoding = 'cp1252'))
 
 # Set UI and Interface
-st.set_page_config(page_title="CL-Aff Shared Task - In Pursuit of Happiness", layout="wide")
+#st.set_page_config(page_title="CL-Aff Shared Task - In Pursuit of Happiness", layout="wide")
 
 st.title("CL-Aff Shared Task - In Pursuit of Happiness")
 
@@ -122,6 +133,7 @@ if optionDataSet == "Training":
         durationHistogram(trainingDF["duration"])
         genderHistorgram(trainingDF["gender"])
         parentHoodHistogram(trainingDF["parenthood"])
+        conceptHistogram(trainingDF["concepts"])
         emotionHistogram(trainingDF)
         genWordCloud(trainingDF["moment"])
     else:
@@ -139,6 +151,7 @@ if optionDataSet == "Test":
         durationHistogram(testDF["duration"])
         genderHistorgram(testDF["gender"])
         parentHoodHistogram(testDF["parenthood"])
+        conceptHistogram(trainingDF["concepts"])
         emotionHistogram(testDF)
         genWordCloud(trainingDF["moment"])
     else:
