@@ -4,7 +4,6 @@ import plotly.figure_factory as ff
 import matplotlib.pyplot as plt
 import numpy as np
 import altair as alt
-from PIL import Image
 from wordcloud import WordCloud, STOPWORDS
 import folium
 from streamlit_folium import folium_static
