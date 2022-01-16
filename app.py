@@ -1,3 +1,4 @@
+from plotly import graph_objs as go
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -7,8 +8,12 @@ import folium
 from streamlit_folium import folium_static
 from folium.plugins import HeatMap
 import plotly.express as px
+from plotly.subplots import make_subplots
+
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
+st.set_page_config(layout = 'wide')
+
 
 #Variable Initialization  
 nations = np.array([['EST',"59", "26"], ['ETH',"8", "38"], ['IDN',"-5", "120"], ['ASM', "-14.3333", "-170"], ['PER', "-10", "-76"], ['KOR',"40", "127"], ['ECU',"-2", "-77.5"], ['KEN',"1", "38"], ['MAC',"22.1667", "113.55"], ['USA',"38", "-97"], ['IND',"20", "77"], ['MYS',"2.5", "112.5"], ['DEU',"51", "9"], ['UGA',"1", "32"], ['BEL',"50.8333", "4"], ['ISR',"31.5", "34.75"], ['JAM', "18.25", "-77.5"], ['ARM', "40", "45"], ['SWE', "62", "15"], ['MKD', "41.8333", "22"], ['LCA',"13.8833", "-61.1333"], ['LKA',"7", "81"], ['GBR', "54", "-2"], ['ROU',"46", "25"], ['CRI',"10", "-84"], ['VEN',"8", "-66"], ['FRA',"46", "2"], ['GEO',"42", "43.5"], ['NGA',"10", "8"], ['LTU',"56", "24"], ['PAK',"30", "70"], ['TTO',"11", "-61"], ['MLT',"35.8333", "14.5833"], ['BHR',"26", "50.55"], ['FIN',"64", "26"], ['VNM',"16", "106"], ['AIA',"18.25", "-63.1667"], ['SVN', "46", "15"], ['NZL',"-41", "174"], ['DZA',"28", "3"], ['KAZ',"48", "68"], ['UMI',"19.2833", "166.6"], ['ALB',"41", "20"], ['SUR', "4", "-56"], ['COL',"4", "-72"], ['KWT',"29.3375", "47.6581"], ['ESP',"40", "-4"], ['AUS',"-27", "133"], ['MDA',"47", "29"], ['AUT',"47.3333", "13.3333"], ['NLD',"52.5", "5.75"], ['THA',"15", "100"], ['JPN',"36", "138"], ['TUR',"39", "35"], ['CHN',"35", "105"], ['NIC',"13", "-85"], ['NOR', "62", "10"], ['PRI',"18.25", "-66.5"], ['SGP',"1.3667", "103.8"], ['PRT',"39.5", "-8"], ['IRL', "53", "-8"], ['URY',"-33", "-56"], ['PHL',"13", "122"], ['ISL',"65", "-18"], ['DNK',"56", "10"], ['EGY',"27", "30"], ['GTM',"15.5", "-90.25"], ['CZE',"49.75", "15.5"], ['VCT',"13.25", "-61.2"], ['ABW',"12.5", "-69.9667"], ['ATA',"-90", "0"], ['AFG',"33", "65"], ['SRB',"44", "21"], ['BRB',"13.1667", "-59.5333"], ['UKR', "49", "32"], ['GRC',"39", "22"], ['DOM',"19", "-70.6667"], ['BRA',"-10", "-55"], ['MAR',"32", "-5"], ['CAN',"60", "-95"], ['MEX',"23", "-102"], ['ARE',"24", "54"], ['ZAF',"-29", "24"], ['RUS',"60", "100"], ['SLV',"13.8333", "-88.9167"], ['BGR',"43", "25"], ['ARG',"-34", "-64"], ['BHS',"24.25", "-76"], ['ITA',"42.8333", "12.8333"]])
@@ -40,6 +45,7 @@ def ageHistogram(age):
     fig = px.bar(ageData, x="Age",y="Frequency")
     st.plotly_chart(fig, use_container_width=True)
 
+
 def nationHistogram(nations):
     nationData = dataHistogramProcess(nations, 'Nations', 'Frequency')
     fig = px.bar(nationData, x="Nations",y="Frequency")
@@ -58,8 +64,10 @@ def heatMap(data):
 def marriageHistogram(marriage):
     marriageData = dataHistogramProcess(marriage, 'Relationship Status', 'Frequency')
     marriageData.reindex([1,0,4,3,5])
-    fig = px.bar(marriageData, x="Relationship Status",y="Frequency")
-    st.plotly_chart(fig, use_container_width=True)
+    x = np.array(marriageData["Relationship Status"])
+    y = np.array(marriageData["Frequency"])
+    trace = go.Bar(x = x, y = y)
+    return trace
 
 def durationHistogram(duration):
     durationData = dataHistogramProcess(duration, 'Duration of Happiness', 'Frequency')
@@ -74,15 +82,19 @@ def durationHistogram(duration):
     fig = px.bar(durationData, x="Duration of Happiness",y="Frequency")
     st.plotly_chart(fig, use_container_width=True)
 
-def genderHistorgram(gender):
+def genderHistogram(gender):
     genderData = dataHistogramProcess(gender, 'Gender', 'Frequency')
-    fig = px.bar(genderData, x="Gender",y="Frequency")
-    st.plotly_chart(fig, use_container_width=True)
+    x = np.array(genderData["Gender"])
+    y = np.array(genderData["Frequency"])
+    trace = go.Bar(x = x, y = y)
+    return trace
 
 def parentHoodHistogram(parent):
     parentData = dataHistogramProcess(parent, 'Parenthood Status', 'Frequency')
-    fig = px.bar(parentData, x="Parenthood Status",y="Frequency")
-    st.plotly_chart(fig, use_container_width=True)    
+    x = np.array(parentData['Parenthood Status'])
+    y = np.array(parentData["Frequency"])
+    trace = go.Bar(x = x, y = y)
+    return trace 
 
 def emotionHistogram(data):
     agencyData = data['agency']
@@ -93,8 +105,10 @@ def emotionHistogram(data):
     socialOccurances = agencyData.count("yes")
     emotionalFrequency = {'Emotion Types' : ["Agency","Social"], "Frequency": [agencyOccurances, socialOccurances]}
     emotionalFrequency = pd.DataFrame(emotionalFrequency)
-    fig = px.bar(emotionalFrequency, x="Emotion Types",y="Frequency")
-    st.plotly_chart(fig, use_container_width=True)   
+    x = np.array(emotionalFrequency["Emotion Types"])
+    y = np.array(emotionalFrequency["Frequency"])
+    trace = go.Bar(x = x, y = y)
+    return trace  
 
 def conceptHistogram(concepts):
     conceptsArray = " "
@@ -118,14 +132,31 @@ def genWordCloud(moments):
     st.pyplot() 
 
 def plotCharts(data):
-    ageHistogram(data["age"])
-    marriageHistogram(data["married"])
-    durationHistogram(data["duration"])
-    genderHistorgram(data["gender"])
-    parentHoodHistogram(data["parenthood"])
-    emotionHistogram(data)
-    conceptHistogram(data["concepts"])
     genWordCloud(data["moment"])
+    st.write(data)
+    conceptHistogram(data["concepts"])
+    ageHistogram(data["age"])
+
+    trace1 = marriageHistogram(data["married"])
+    trace2 = genderHistogram(data["gender"])
+    trace3 = parentHoodHistogram(data["parenthood"])
+    trace4 = emotionHistogram(data)
+
+    fig = make_subplots(rows = 2, cols = 2, subplot_titles = ("Relationship Status", "Gender", "Parents", "Emotion Type"), y_title = "Frequency")
+    fig.append_trace(trace1, 1,1)
+    fig.append_trace(trace2, 1, 2)
+    fig.append_trace(trace3, 2, 1)
+    fig.append_trace(trace4, 2, 2)
+
+    fig.layout.update(showlegend = False)
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    durationHistogram(data["duration"])
+
+
+
+
 
 def displayData(dataset, selection, selectionType):
     if selection == "ALL":
