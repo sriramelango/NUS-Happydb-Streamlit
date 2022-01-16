@@ -1,10 +1,7 @@
-from re import L
 import streamlit as st
 import pandas as pd
-import plotly.figure_factory as ff
 import matplotlib.pyplot as plt
 import numpy as np
-import altair as alt
 from wordcloud import WordCloud, STOPWORDS
 import folium
 from streamlit_folium import folium_static
