@@ -136,8 +136,11 @@ def genWordCloud(moments):
 #Plots all Data in Format
 def plotCharts(data):
     #Graphs 
+    st.subheader("Word Cloud")
     genWordCloud(data["moment"])
+    st.subheader("Dataset")
     st.write(data)
+    st.subheader("Frequency Graphs")
     conceptBarGraph(data["concepts"])
     ageBarGraph(data["age"])
 
@@ -211,15 +214,15 @@ st.markdown("""
 
 #User Interaction
 with st.expander("Survey/Data Distribution"):
-    st.subheader('Survey/Data Distribution')
-    optionMap = st.selectbox("What map woud you like to explore?",("Heatmap","Scattermap"))
+    st.header('Survey/Data Distribution')
+    optionMap = st.selectbox("What map woud you like to explore?",("Scattermap","Heatmap"))
     if optionMap == "Scattermap":
         st.map(nations)
     if optionMap == "Heatmap":
         heatMap(nations)
 
 with st.expander("Demographics"):
-    st.subheader('Demographics')
+    st.header('Demographics')
     optionDataSet = st.selectbox("What dataset would you like to explore?",("All", "Training","Test"))
     optionDemographic = st.selectbox("What demographic would you like to explore?",("Age", "Gender","Country"))
     if optionDataSet == "All":
