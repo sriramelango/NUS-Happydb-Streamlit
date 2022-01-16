@@ -10,7 +10,7 @@ from folium.plugins import HeatMap
 import plotly.express as px
 from plotly.subplots import make_subplots
 
-
+# Set Page Options
 st.set_option('deprecation.showPyplotGlobalUse', False)
 st.set_page_config(layout = 'wide')
 
@@ -21,6 +21,7 @@ nations = pd.DataFrame(nations, columns = ['Country','latitude','longitude'])
 nations["latitude"] = pd.to_numeric(nations["latitude"], downcast="float")
 nations["longitude"] = pd.to_numeric(nations["longitude"], downcast="float")
 
+# Data Processing
 def normalizeData(trainingData):
     trainingData['age'] = pd.to_numeric(trainingData['age'], errors='coerce')
     return trainingData
