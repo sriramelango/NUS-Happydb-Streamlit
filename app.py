@@ -26,7 +26,7 @@ def normalizeData(trainingData):
     trainingData['age'] = pd.to_numeric(trainingData['age'], errors='coerce')
     return trainingData
 
-def dataHistogramProcess(data,xlabel,ylabel):
+def dataBarGraphProcess(data,xlabel,ylabel):
     dataFiltered = []
     dataUnique = data.unique()
     data = data.tolist()
@@ -38,17 +38,17 @@ def dataHistogramProcess(data,xlabel,ylabel):
     dataFiltered = dataFiltered.dropna()
     return dataFiltered
 
-def ageHistogram(age):
-    ageData = dataHistogramProcess(age, 'Age', 'Frequency')
+
+def ageBarGraph(age):
+    ageData = dataBarGraphProcess(age, 'Age', 'Frequency')
     ageData = ageData.sort_values("Age")
     ageData = ageData[ageData['Age'] > 16]
     ageData = ageData[ageData['Age'] < 100]
     fig = px.bar(ageData, x="Age",y="Frequency")
     st.plotly_chart(fig, use_container_width=True)
 
-
-def nationHistogram(nations):
-    nationData = dataHistogramProcess(nations, 'Nations', 'Frequency')
+def nationBarGraph(nations):
+    nationData = dataBarGraphProcess(nations, 'Nations', 'Frequency')
     fig = px.bar(nationData, x="Nations",y="Frequency")
     st.plotly_chart(fig, use_container_width=True)
 
@@ -62,16 +62,16 @@ def heatMap(data):
     HeatMap(heat_data).add_to(map_heatmap)
     folium_static(map_heatmap)
 
-def marriageHistogram(marriage):
-    marriageData = dataHistogramProcess(marriage, 'Relationship Status', 'Frequency')
+def marriageBarGraph(marriage):
+    marriageData = dataBarGraphProcess(marriage, 'Relationship Status', 'Frequency')
     marriageData.reindex([1,0,4,3,5])
     x = np.array(marriageData["Relationship Status"])
     y = np.array(marriageData["Frequency"])
     trace = go.Bar(x = x, y = y)
     return trace
 
-def durationHistogram(duration):
-    durationData = dataHistogramProcess(duration, 'Duration of Happiness', 'Frequency')
+def durationBarGraph(duration):
+    durationData = dataBarGraphProcess(duration, 'Duration of Happiness', 'Frequency')
     durationData = durationData.reindex([5,1,9,0,2,3,6])
     durationData = durationData.drop([3, 6])
     durationData.at[0, 'Duration of Happiness'] = 'Half a Day'
@@ -83,21 +83,21 @@ def durationHistogram(duration):
     fig = px.bar(durationData, x="Duration of Happiness",y="Frequency")
     st.plotly_chart(fig, use_container_width=True)
 
-def genderHistogram(gender):
-    genderData = dataHistogramProcess(gender, 'Gender', 'Frequency')
+def genderBarGraph(gender):
+    genderData = dataBarGraphProcess(gender, 'Gender', 'Frequency')
     x = np.array(genderData["Gender"])
     y = np.array(genderData["Frequency"])
     trace = go.Bar(x = x, y = y)
     return trace
 
-def parentHoodHistogram(parent):
-    parentData = dataHistogramProcess(parent, 'Parenthood Status', 'Frequency')
+def parentHoodBarGraph(parent):
+    parentData = dataBarGraphProcess(parent, 'Parenthood Status', 'Frequency')
     x = np.array(parentData['Parenthood Status'])
     y = np.array(parentData["Frequency"])
     trace = go.Bar(x = x, y = y)
     return trace 
 
-def emotionHistogram(data):
+def emotionBarGraph(data):
     agencyData = data['agency']
     agencyData = agencyData.tolist()
     agencyOccurances = agencyData.count("yes")
@@ -111,13 +111,13 @@ def emotionHistogram(data):
     trace = go.Bar(x = x, y = y)
     return trace  
 
-def conceptHistogram(concepts):
+def conceptBarGraph(concepts):
     conceptsArray = " "
     for index, values in concepts.items():
         conceptsArray += values + " "
     conceptsArray = conceptsArray.replace("|"," ")
     conceptsArray = pd.Series(conceptsArray.split())
-    conceptsData = dataHistogramProcess(conceptsArray, 'Concepts', 'Frequency')
+    conceptsData = dataBarGraphProcess(conceptsArray, 'Concepts', 'Frequency')
     fig = px.bar(conceptsData, x="Concepts",y="Frequency")
     st.plotly_chart(fig, use_container_width=True)     
 
@@ -135,13 +135,13 @@ def genWordCloud(moments):
 def plotCharts(data):
     genWordCloud(data["moment"])
     st.write(data)
-    conceptHistogram(data["concepts"])
-    ageHistogram(data["age"])
+    conceptBarGraph(data["concepts"])
+    ageBarGraph(data["age"])
 
-    trace1 = marriageHistogram(data["married"])
-    trace2 = genderHistogram(data["gender"])
-    trace3 = parentHoodHistogram(data["parenthood"])
-    trace4 = emotionHistogram(data)
+    trace1 = marriageBarGraph(data["married"])
+    trace2 = genderBarGraph(data["gender"])
+    trace3 = parentHoodBarGraph(data["parenthood"])
+    trace4 = emotionBarGraph(data)
 
     fig = make_subplots(rows = 2, cols = 2, subplot_titles = ("Relationship Status", "Gender", "Parents", "Emotion Type"), y_title = "Frequency")
     fig.append_trace(trace1, 1,1)
@@ -153,7 +153,8 @@ def plotCharts(data):
 
     st.plotly_chart(fig, use_container_width=True)
 
-    durationHistogram(data["duration"])
+    durationBarGraph(data["duration"])
+    nationBarGraph(data["country"])
 
 
 
