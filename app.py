@@ -213,10 +213,10 @@ st.markdown("""
 with st.expander("Survey/Data Distribution"):
     st.subheader('Survey/Data Distribution')
     optionMap = st.selectbox("What map woud you like to explore?",("Heatmap","Scattermap"))
-    if optionMap == "Heatmap":
-        heatMap(nations)
     if optionMap == "Scattermap":
         st.map(nations)
+    if optionMap == "Heatmap":
+        heatMap(nations)
 
 with st.expander("Demographics"):
     st.subheader('Demographics')
