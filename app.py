@@ -1,3 +1,4 @@
+from re import L
 import streamlit as st
 import pandas as pd
 import plotly.figure_factory as ff
@@ -25,10 +26,10 @@ def dataHistogramProcess(data,xlabel,ylabel):
     dataFiltered = []
     dataUnique = data.unique()
     data = data.tolist()
-    ageUnique = dataUnique.tolist()
-    for i in range(len(ageUnique)):
-        occurrences = data.count(ageUnique[i])
-        dataFiltered.append([ageUnique[i], occurrences])
+    dataUnique = dataUnique.tolist()
+    for i in range(len(dataUnique)):
+        occurrences = data.count(dataUnique[i])
+        dataFiltered.append([dataUnique[i], occurrences])
     dataFiltered = pd.DataFrame(dataFiltered, columns=[xlabel, ylabel])
     dataFiltered = dataFiltered.dropna()
     return dataFiltered
@@ -40,6 +41,7 @@ def ageHistogram(age):
     ageData = ageData[ageData['Age'] < 100]
     c = alt.Chart(ageData).mark_bar().encode(x='Age',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)
+
 
 # Country Frequency Mapping - NEED TO CHANGE TO GRAPHING BASED ON MAPS(HEAT MAP)
 def nationHistogram(nations):
@@ -59,11 +61,20 @@ def heatMap(data):
 
 def marriageHistogram(marriage):
     marriageData = dataHistogramProcess(marriage, 'Relationship Status', 'Frequency')
+    marriageData.reindex([1,0,4,3,5])
     c = alt.Chart(marriageData).mark_bar().encode(x='Relationship Status',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)
 
 def durationHistogram(duration):
     durationData = dataHistogramProcess(duration, 'Duration of Happiness', 'Frequency')
+    durationData = durationData.reindex([5,1,9,0,2,3,6])
+    durationData = durationData.drop([3, 6])
+    durationData.at[0, 'Duration of Happiness'] = 'Half a Day'
+    durationData.at[1, 'Duration of Happiness'] = '1 Hour Min'
+    durationData.at[2, 'Duration of Happiness'] = 'All Day'
+    durationData.at[5, 'Duration of Happiness'] = 'Few Minutes'
+    durationData = durationData.reset_index()
+    durationData = durationData.dropna()
     c = alt.Chart(durationData).mark_bar().encode(x='Duration of Happiness',y='Frequency').interactive()
     st.altair_chart(c, use_container_width=True)  
 
@@ -115,7 +126,8 @@ def genWordCloud(moments):
     stopwords = set(STOPWORDS)
     for index,values in moments.items():
         words += values + " "
-    wordCloud = WordCloud(background_color = "black", stopwords=stopwords).generate(words) 
+    words = words.lower()
+    wordCloud = WordCloud(background_color = "black", stopwords=stopwords, prefer_horizontal=1).generate(words) 
     plt.imshow(wordCloud, interpolation="bilinear") 
     plt.axis('off') 
     st.pyplot()
@@ -129,8 +141,6 @@ testDF = normalizeData(pd.read_csv("./data/labeledDataTest.csv",sep=",",encoding
 testDF = testDF.reindex(columns=['hmid',"moment","concepts","agency","social","age","country","gender","married","parenthood","reflection","duration"])
 allDF = pd.concat([trainingDF, testDF])
 allDF = allDF.reset_index()
-
-
 #st.set_page_config(page_title="CL-Aff Shared Task - In Pursuit of Happiness", layout="wide")
 
 st.title("CL-Aff Shared Task - In Pursuit of Happiness")
@@ -141,74 +151,76 @@ st.markdown("""
 * Check out the Workshop and Shared Task website: https://sites.google.com/view/affcon2019/home
 """)
 
-st.subheader('Data Distribution')
+
 
 #User Interaction
-optionMap = st.selectbox("What map woud you like to explore?",("Heatmap","Scattermap"))
-if optionMap == "Heatmap":
-    heatMap(nations)
-if optionMap == "Scattermap":
-    st.map(nations)
+with st.expander("Survey/Data Distribution"):
+    st.subheader('Survey/Data Distribution')
+    optionMap = st.selectbox("What map woud you like to explore?",("Heatmap","Scattermap"))
+    if optionMap == "Heatmap":
+        heatMap(nations)
+    if optionMap == "Scattermap":
+        st.map(nations)
 
-optionDataSet = st.selectbox("What dataset would you like to explore?",("All", "Training","Test"))
-st.write('You selected:', optionDataSet)
+with st.expander("Demographics"):
+    st.subheader('Demographics')
+    optionDataSet = st.selectbox("What dataset would you like to explore?",("All", "Training","Test"))
+    if optionDataSet == "All":
+            selectionOptions = pd.DataFrame(allDF["country"].unique()).dropna().append(["ALL"])
+            nation = st.selectbox("Where would you like to explore?", selectionOptions)
+            if nation == "ALL":
+                st.write(allDF) 
+                ageHistogram(allDF["age"])
+                nationHistogram(allDF["country"])
+                marriageHistogram(allDF["married"])
+                durationHistogram(allDF["duration"])
+                genderHistorgram(allDF["gender"])
+                parentHoodHistogram(allDF["parenthood"])
+                conceptHistogram(allDF["concepts"])
+                emotionHistogram(allDF)
+                genWordCloud(allDF["moment"])
+            else:
+                st.write(trainingDF[allDF["country"] == nation]) 
+                demographicViewer(nation, allDF)
 
-if optionDataSet == "All":
-    st.write(allDF)
-    st.title('Demographics')
-    selectionOptions = pd.DataFrame(allDF["country"].unique()).dropna().append(["ALL"])
-    nation = st.selectbox("Where would you like to explore?", selectionOptions)
-    if nation == "ALL":
-        st.write(allDF) 
-        ageHistogram(allDF["age"])
-        nationHistogram(allDF["country"])
-        marriageHistogram(allDF["married"])
-        durationHistogram(allDF["duration"])
-        genderHistorgram(allDF["gender"])
-        parentHoodHistogram(allDF["parenthood"])
-        conceptHistogram(allDF["concepts"])
-        emotionHistogram(allDF)
-        genWordCloud(allDF["moment"])
-    else:
-        st.write(trainingDF[allDF["country"] == nation]) 
-        demographicViewer(nation, allDF)
+    if optionDataSet == "Training":
+        selectionOptions = pd.DataFrame(trainingDF["country"].unique()).dropna().append(["ALL"])
+        nation = st.selectbox("Where would you like to explore?", selectionOptions)
+        if nation == "ALL":
+            st.write(trainingDF) 
+            ageHistogram(trainingDF["age"])
+            nationHistogram(trainingDF["country"])
+            marriageHistogram(trainingDF["married"])
+            durationHistogram(trainingDF["duration"])
+            genderHistorgram(trainingDF["gender"])
+            parentHoodHistogram(trainingDF["parenthood"])
+            conceptHistogram(trainingDF["concepts"])
+            emotionHistogram(trainingDF)
+            genWordCloud(trainingDF["moment"])
+        else:
+            st.write(trainingDF[trainingDF["country"] == nation]) 
+            demographicViewer(nation, trainingDF)
 
+    if optionDataSet == "Test":
+        selectionOptions = pd.DataFrame(testDF["country"].unique()).dropna().append(["ALL"])
+        nation = st.selectbox("Where would you like to explore?", selectionOptions)
+        if nation == "ALL":
+            st.write(testDF) 
+            ageHistogram(testDF["age"])
+            nationHistogram(testDF["country"])
+            marriageHistogram(testDF["married"])
+            durationHistogram(testDF["duration"])
+            genderHistorgram(testDF["gender"])
+            parentHoodHistogram(testDF["parenthood"])
+            conceptHistogram(trainingDF["concepts"])
+            emotionHistogram(testDF)
+            genWordCloud(trainingDF["moment"])
+        else:
+            st.write(testDF[testDF["country"] == nation]) 
+            demographicViewer(nation, testDF)
 
+with st.expander("Compare"):
+    selectionOptions = pd.DataFrame(allDF["country"].unique()).dropna()
+    compareOptions = st.multiselect("Select Two Countries to Compare", selectionOptions)
 
-if optionDataSet == "Training":
-    st.title('Demographics')
-    selectionOptions = pd.DataFrame(trainingDF["country"].unique()).dropna().append(["ALL"])
-    nation = st.selectbox("Where would you like to explore?", selectionOptions)
-    if nation == "ALL":
-        st.write(trainingDF) 
-        ageHistogram(trainingDF["age"])
-        nationHistogram(trainingDF["country"])
-        marriageHistogram(trainingDF["married"])
-        durationHistogram(trainingDF["duration"])
-        genderHistorgram(trainingDF["gender"])
-        parentHoodHistogram(trainingDF["parenthood"])
-        conceptHistogram(trainingDF["concepts"])
-        emotionHistogram(trainingDF)
-        genWordCloud(trainingDF["moment"])
-    else:
-        st.write(trainingDF[trainingDF["country"] == nation]) 
-        demographicViewer(nation, trainingDF)
-
-if optionDataSet == "Test":
-    st.title('Demographics')
-    selectionOptions = pd.DataFrame(testDF["country"].unique()).dropna().append(["ALL"])
-    nation = st.selectbox("Where would you like to explore?", selectionOptions)
-    if nation == "ALL":
-        st.write(testDF) 
-        ageHistogram(testDF["age"])
-        nationHistogram(testDF["country"])
-        marriageHistogram(testDF["married"])
-        durationHistogram(testDF["duration"])
-        genderHistorgram(testDF["gender"])
-        parentHoodHistogram(testDF["parenthood"])
-        conceptHistogram(trainingDF["concepts"])
-        emotionHistogram(testDF)
-        genWordCloud(trainingDF["moment"])
-    else:
-        st.write(testDF[testDF["country"] == nation]) 
-        demographicViewer(nation, testDF)
+    
