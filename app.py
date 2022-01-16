@@ -9,6 +9,7 @@ from wordcloud import WordCloud, STOPWORDS
 import folium
 from streamlit_folium import folium_static
 from folium.plugins import HeatMap
+import plotly.express as px
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
@@ -39,15 +40,15 @@ def ageHistogram(age):
     ageData = ageData.sort_values("Age")
     ageData = ageData[ageData['Age'] > 16]
     ageData = ageData[ageData['Age'] < 100]
-    c = alt.Chart(ageData).mark_bar().encode(x='Age',y='Frequency').interactive()
-    st.altair_chart(c, use_container_width=True)
+    fig = px.bar(ageData, x="Age",y="Frequency")
+    st.plotly_chart(fig, use_container_width=True)
 
 
 # Country Frequency Mapping - NEED TO CHANGE TO GRAPHING BASED ON MAPS(HEAT MAP)
 def nationHistogram(nations):
     nationData = dataHistogramProcess(nations, 'Nations', 'Frequency')
-    c = alt.Chart(nationData).mark_bar().encode(x='Nations',y='Frequency').interactive()
-    st.altair_chart(c, use_container_width=True)
+    fig = px.bar(nationData, x="Nations",y="Frequency")
+    st.plotly_chart(fig, use_container_width=True)
 
 def heatMap(data):
     # Resource intensive!
@@ -62,8 +63,9 @@ def heatMap(data):
 def marriageHistogram(marriage):
     marriageData = dataHistogramProcess(marriage, 'Relationship Status', 'Frequency')
     marriageData.reindex([1,0,4,3,5])
-    c = alt.Chart(marriageData).mark_bar().encode(x='Relationship Status',y='Frequency').interactive()
-    st.altair_chart(c, use_container_width=True)
+    fig = px.bar(marriageData, x="Relationship Status",y="Frequency")
+    st.plotly_chart(fig, use_container_width=True)
+
 
 def durationHistogram(duration):
     durationData = dataHistogramProcess(duration, 'Duration of Happiness', 'Frequency')
@@ -75,18 +77,18 @@ def durationHistogram(duration):
     durationData.at[5, 'Duration of Happiness'] = 'Few Minutes'
     durationData = durationData.reset_index()
     durationData = durationData.dropna()
-    c = alt.Chart(durationData).mark_bar().encode(x='Duration of Happiness',y='Frequency').interactive()
-    st.altair_chart(c, use_container_width=True)  
+    fig = px.bar(durationData, x="Duration of Happiness",y="Frequency")
+    st.plotly_chart(fig, use_container_width=True)
 
 def genderHistorgram(gender):
     genderData = dataHistogramProcess(gender, 'Gender', 'Frequency')
-    c = alt.Chart(genderData).mark_bar().encode(x='Gender',y='Frequency').interactive()
-    st.altair_chart(c, use_container_width=True)     
+    fig = px.bar(genderData, x="Gender",y="Frequency")
+    st.plotly_chart(fig, use_container_width=True)
 
 def parentHoodHistogram(parent):
     parentData = dataHistogramProcess(parent, 'Parenthood Status', 'Frequency')
-    c = alt.Chart(parentData).mark_bar().encode(x='Parenthood Status',y='Frequency').interactive()
-    st.altair_chart(c, use_container_width=True)     
+    fig = px.bar(parentData, x="Parenthood Status",y="Frequency")
+    st.plotly_chart(fig, use_container_width=True)    
 
 def emotionHistogram(data):
     agencyData = data['agency']
@@ -95,10 +97,10 @@ def emotionHistogram(data):
     socialData = data['social']
     socialData = socialData.tolist()
     socialOccurances = agencyData.count("yes")
-    emotionalFrequency = {'Labels' : ["Agency","Social"], "Frequency": [agencyOccurances, socialOccurances]}
+    emotionalFrequency = {'Emotion Types' : ["Agency","Social"], "Frequency": [agencyOccurances, socialOccurances]}
     emotionalFrequency = pd.DataFrame(emotionalFrequency)
-    c = alt.Chart(emotionalFrequency).mark_bar().encode(x='Labels',y='Frequency').interactive()
-    st.altair_chart(c, use_container_width=True)
+    fig = px.bar(emotionalFrequency, x="Emotion Types",y="Frequency")
+    st.plotly_chart(fig, use_container_width=True)   
 
 def conceptHistogram(concepts):
     conceptsArray = " "
@@ -107,8 +109,8 @@ def conceptHistogram(concepts):
     conceptsArray = conceptsArray.replace("|"," ")
     conceptsArray = pd.Series(conceptsArray.split())
     conceptsData = dataHistogramProcess(conceptsArray, 'Concepts', 'Frequency')
-    c = alt.Chart(conceptsData).mark_bar().encode(x='Concepts',y='Frequency').interactive()
-    st.altair_chart(c, use_container_width=True)     
+    fig = px.bar(conceptsData, x="Concepts",y="Frequency")
+    st.plotly_chart(fig, use_container_width=True)      
 
 def demographicViewer(country, data):
     countryDataset = data[data["country"] == country]
