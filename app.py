@@ -227,6 +227,6 @@ with st.expander("Demographics"):
     if optionDataSet == "Test":
         demographicAnalysis(testDF, optionDemographic)
 
-with st.expander("Compare"):
-    selectionOptions = pd.DataFrame(allDF["country"].unique()).dropna()
-    compareOptions = st.multiselect("Select Two Countries to Compare", selectionOptions)
+#with st.expander("Compare"):
+ #   selectionOptions = pd.DataFrame(allDF["country"].unique()).dropna()
+ #   compareOptions = st.multiselect("Select Two Countries to Compare", selectionOptions)
