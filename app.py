@@ -21,6 +21,7 @@ nations = pd.DataFrame(nations, columns = ['Country','latitude','longitude'])
 nations["latitude"] = pd.to_numeric(nations["latitude"], downcast="float")
 nations["longitude"] = pd.to_numeric(nations["longitude"], downcast="float")
 
+
 # Data Processing
 def normalizeData(trainingData):
     trainingData['age'] = pd.to_numeric(trainingData['age'], errors='coerce')
@@ -38,7 +39,7 @@ def dataBarGraphProcess(data,xlabel,ylabel):
     dataFiltered = dataFiltered.dropna()
     return dataFiltered
 
-
+# Data Graph Plotting Functions
 def ageBarGraph(age):
     ageData = dataBarGraphProcess(age, 'Age', 'Frequency')
     ageData = ageData.sort_values("Age")
@@ -132,34 +133,34 @@ def genWordCloud(moments):
     plt.axis('off') 
     st.pyplot() 
 
+#Plots all Data in Format
 def plotCharts(data):
+    #Graphs 
     genWordCloud(data["moment"])
     st.write(data)
     conceptBarGraph(data["concepts"])
     ageBarGraph(data["age"])
 
+    # Subplots Called from Functions
     trace1 = marriageBarGraph(data["married"])
     trace2 = genderBarGraph(data["gender"])
     trace3 = parentHoodBarGraph(data["parenthood"])
     trace4 = emotionBarGraph(data)
 
+    # Subplots Plotting to GUI
     fig = make_subplots(rows = 2, cols = 2, subplot_titles = ("Relationship Status", "Gender", "Parents", "Emotion Type"), y_title = "Frequency")
     fig.append_trace(trace1, 1,1)
     fig.append_trace(trace2, 1, 2)
     fig.append_trace(trace3, 2, 1)
     fig.append_trace(trace4, 2, 2)
-
     fig.layout.update(showlegend = False)
-
     st.plotly_chart(fig, use_container_width=True)
 
+    #Graphs
     durationBarGraph(data["duration"])
     nationBarGraph(data["country"])
 
-
-
-
-
+# Adds Functionality for Selecting Between All Data and Filtered Data
 def displayData(dataset, selection, selectionType):
     if selection == "ALL":
         plotCharts(dataset)
@@ -167,6 +168,7 @@ def displayData(dataset, selection, selectionType):
         data = dataset[dataset[selection] == selectionType]
         plotCharts(data)
 
+# Functionality for User Selection in @Demographics Section
 def demographicAnalysis(optionDataset, optionDemographic):
     if optionDemographic == "Country":
         selectionOptions = pd.DataFrame(optionDataset["country"].unique()).dropna().append(["ALL"])
@@ -183,15 +185,19 @@ def demographicAnalysis(optionDataset, optionDemographic):
         gender = st.selectbox("What gender would you like to explore?", selectionOptions)
         displayData(optionDataset, "gender", gender)
 
-# Obtain and Process Data
+
+# Obtain and Process Labeled Data
 trainingDF = normalizeData(pd.read_csv("./data/labeledDataTrain.csv"))
 testDF = normalizeData(pd.read_csv("./data/labeledDataTest.csv",sep=",",encoding = 'cp1252'))
+
 
 #Merge DataSets and Process Data
 testDF = testDF.reindex(columns=['hmid',"moment","concepts","agency","social","age","country","gender","married","parenthood","reflection","duration"])
 allDF = pd.concat([trainingDF, testDF])
 allDF = allDF.reset_index()
 
+
+# Introductory Information
 st.title("CL-Aff Shared Task - In Pursuit of Happiness")
 
 st.markdown("""
@@ -199,6 +205,7 @@ st.markdown("""
 * A part of the AffCon Workshop @ AAAI 2019 for Modeling Affect-in-Action
 * Check out the Workshop and Shared Task website: https://sites.google.com/view/affcon2019/home
 """)
+
 
 #User Interaction
 with st.expander("Survey/Data Distribution"):
