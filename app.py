@@ -224,7 +224,7 @@ with st.expander("Survey/Data Distribution"):
 with st.expander("Demographics"):
     st.header('Demographics')
     optionDataSet = st.selectbox("What dataset would you like to explore?",("All", "Training","Test"))
-    optionDemographic = st.selectbox("What demographic would you like to explore?",("Age", "Gender","Country"))
+    optionDemographic = st.selectbox("What demographic would you like to explore?",("Country","Age", "Gender"))
     if optionDataSet == "All":
         demographicAnalysis(allDF, optionDemographic)
     if optionDataSet == "Training":
