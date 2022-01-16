@@ -140,7 +140,6 @@ testDF = normalizeData(pd.read_csv("./data/labeledDataTest.csv",sep=",",encoding
 testDF = testDF.reindex(columns=['hmid',"moment","concepts","agency","social","age","country","gender","married","parenthood","reflection","duration"])
 allDF = pd.concat([trainingDF, testDF])
 allDF = allDF.reset_index()
-#st.set_page_config(page_title="CL-Aff Shared Task - In Pursuit of Happiness", layout="wide")
 
 st.title("CL-Aff Shared Task - In Pursuit of Happiness")
 
