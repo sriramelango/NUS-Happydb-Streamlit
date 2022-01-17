@@ -40,13 +40,20 @@ def dataBarGraphProcess(data,xlabel,ylabel):
     return dataFiltered
 
 # Data Graph Plotting Functions
-def ageBarGraph(age):
+def ageBarGraph(age, name = ""):
     ageData = dataBarGraphProcess(age, 'Age', 'Frequency')
     ageData = ageData.sort_values("Age")
     ageData = ageData[ageData['Age'] > 16]
     ageData = ageData[ageData['Age'] < 100]
-    fig = px.bar(ageData, x="Age",y="Frequency")
-    st.plotly_chart(fig, use_container_width=True)
+    if name == "":
+        fig = px.bar(ageData, x="Age",y="Frequency")
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        x = np.array(ageData["Age"])
+        y = np.array(ageData["Frequency"])
+        trace = go.Bar(name = name, x = x, y = y)
+        return trace
+
 
 def nationBarGraph(nations):
     nationData = dataBarGraphProcess(nations, 'Nations', 'Frequency')
@@ -63,15 +70,15 @@ def heatMap(data):
     HeatMap(heat_data).add_to(map_heatmap)
     folium_static(map_heatmap)
 
-def marriageBarGraph(marriage):
+def marriageBarGraph(marriage, name = ""):
     marriageData = dataBarGraphProcess(marriage, 'Relationship Status', 'Frequency')
     marriageData.reindex([1,0,4,3,5])
     x = np.array(marriageData["Relationship Status"])
     y = np.array(marriageData["Frequency"])
-    trace = go.Bar(x = x, y = y)
+    trace = go.Bar(name = name, x = x, y = y)
     return trace
 
-def durationBarGraph(duration):
+def durationBarGraph(duration, name = ""):
     durationData = dataBarGraphProcess(duration, 'Duration of Happiness', 'Frequency')
     durationData = durationData.reindex([5,1,9,0,2,3,6])
     durationData = durationData.drop([3, 6])
@@ -81,24 +88,30 @@ def durationBarGraph(duration):
     durationData.at[5, 'Duration of Happiness'] = 'Few Minutes'
     durationData = durationData.reset_index()
     durationData = durationData.dropna()
-    fig = px.bar(durationData, x="Duration of Happiness",y="Frequency")
-    st.plotly_chart(fig, use_container_width=True)
+    if name == "":
+        fig = px.bar(durationData, x="Duration of Happiness",y="Frequency")
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        x = np.array(durationData["Duration of Happiness"])
+        y = np.array(durationData["Frequency"])
+        trace = go.Bar(name = name, x = x, y = y)
+        return trace
 
-def genderBarGraph(gender):
+def genderBarGraph(gender, name = ""):
     genderData = dataBarGraphProcess(gender, 'Gender', 'Frequency')
     x = np.array(genderData["Gender"])
     y = np.array(genderData["Frequency"])
-    trace = go.Bar(x = x, y = y)
+    trace = go.Bar(name = name, x = x, y = y)
     return trace
 
-def parentHoodBarGraph(parent):
+def parentHoodBarGraph(parent, name = ""):
     parentData = dataBarGraphProcess(parent, 'Parenthood Status', 'Frequency')
     x = np.array(parentData['Parenthood Status'])
     y = np.array(parentData["Frequency"])
-    trace = go.Bar(x = x, y = y)
+    trace = go.Bar(name = name, x = x, y = y)
     return trace 
 
-def emotionBarGraph(data):
+def emotionBarGraph(data, name = ""):
     agencyData = data['agency']
     agencyData = agencyData.tolist()
     agencyOccurances = agencyData.count("yes")
@@ -109,18 +122,24 @@ def emotionBarGraph(data):
     emotionalFrequency = pd.DataFrame(emotionalFrequency)
     x = np.array(emotionalFrequency["Emotion Types"])
     y = np.array(emotionalFrequency["Frequency"])
-    trace = go.Bar(x = x, y = y)
+    trace = go.Bar(name = name, x = x, y = y)
     return trace  
 
-def conceptBarGraph(concepts):
+def conceptBarGraph(concepts, name = ""):
     conceptsArray = " "
     for index, values in concepts.items():
         conceptsArray += values + " "
     conceptsArray = conceptsArray.replace("|"," ")
     conceptsArray = pd.Series(conceptsArray.split())
     conceptsData = dataBarGraphProcess(conceptsArray, 'Concepts', 'Frequency')
-    fig = px.bar(conceptsData, x="Concepts",y="Frequency")
-    st.plotly_chart(fig, use_container_width=True)     
+    if name == "":
+        fig = px.bar(conceptsData, x="Concepts",y="Frequency")
+        st.plotly_chart(fig, use_container_width=True)     
+    else:
+        x = np.array(conceptsData["Concepts"])
+        y = np.array(conceptsData["Frequency"])
+        trace = go.Bar(name = name, x = x, y = y)
+        return trace  
 
 def genWordCloud(moments):
     words = ""
@@ -165,7 +184,7 @@ def plotCharts(data):
 
 # Adds Functionality for Selecting Between All Data and Filtered Data
 def displayData(dataset, selection, selectionType):
-    if selection == "ALL":
+    if selectionType == "ALL":
         plotCharts(dataset)
     else:
         data = dataset[dataset[selection] == selectionType]
@@ -232,6 +251,52 @@ with st.expander("Demographics"):
     if optionDataSet == "Test":
         demographicAnalysis(testDF, optionDemographic)
 
-#with st.expander("Compare"):
- #   selectionOptions = pd.DataFrame(allDF["country"].unique()).dropna()
- #   compareOptions = st.multiselect("Select Two Countries to Compare", selectionOptions)
+with st.expander("Compare"):
+    selectionOptions = pd.DataFrame(allDF["country"].unique()).dropna()
+    compareOptions = st.multiselect("Select Two Countries to Compare", selectionOptions)
+    if (len(compareOptions) == 2):
+        # Obtain Data
+        country1 = allDF[allDF["country"] == compareOptions[0]]
+        country2 = allDF[allDF["country"] == compareOptions[1]]
+
+        #Age Data
+        trace1 = ageBarGraph(country1["age"], compareOptions[0])
+        trace2 = ageBarGraph(country2["age"], compareOptions[1])
+        fig = go.Figure(data = [trace1, trace2])
+        fig.update_layout(barmode='group', title= "Age")
+        st.plotly_chart(fig, use_container_width=True)
+
+        #Concepts Data
+        trace1 = conceptBarGraph(country1["concepts"], compareOptions[0])
+        trace2 = conceptBarGraph(country2["concepts"], compareOptions[1])
+        fig = go.Figure(data = [trace1, trace2])
+        fig.update_layout(barmode='group', title= "Concepts")
+        st.plotly_chart(fig, use_container_width=True)
+
+        #Gender Data
+        trace1 = genderBarGraph(country1["gender"], compareOptions[0])
+        trace2 = genderBarGraph(country2["gender"], compareOptions[1])
+        fig = go.Figure(data = [trace1, trace2])
+        fig.update_layout(barmode='group', title="Gender")
+        st.plotly_chart(fig, use_container_width=True)
+
+        #Emotion Data
+        trace1 = emotionBarGraph(country1, compareOptions[0])
+        trace2 = emotionBarGraph(country2, compareOptions[1])
+        fig = go.Figure(data = [trace1, trace2])
+        fig.update_layout(barmode='group', title= "Emotion Type")
+        st.plotly_chart(fig, use_container_width=True)
+
+        #Marriage Data
+        trace1 = marriageBarGraph(country1["married"], compareOptions[0])
+        trace2 = marriageBarGraph(country2["married"], compareOptions[1])
+        fig = go.Figure(data = [trace1, trace2])
+        fig.update_layout(barmode='group', title="Relationship Status")
+        st.plotly_chart(fig, use_container_width=True)
+
+        #Parenthood Data
+        trace1 = parentHoodBarGraph(country1["parenthood"], compareOptions[0])
+        trace2 = parentHoodBarGraph(country2["parenthood"], compareOptions[1])
+        fig = go.Figure(data = [trace1, trace2])
+        fig.update_layout(barmode='group', title= "Parenthood Status")
+        st.plotly_chart(fig, use_container_width=True)
