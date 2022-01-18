@@ -259,6 +259,14 @@ with st.expander("Compare"):
         country1 = allDF[allDF["country"] == compareOptions[0]]
         country2 = allDF[allDF["country"] == compareOptions[1]]
 
+        #Pie Chart 
+        sizes = [len(country1), len(country2)]
+        pie = go.Pie(labels = [compareOptions[0], compareOptions[1]], values = sizes)
+        fig = go.Figure(pie)
+        fig.update_layout(barmode='group', title= "Data Composition in Comparison")
+        st.plotly_chart(fig, use_container_width=True)
+
+
         #Age Data
         trace1 = ageBarGraph(country1["age"], compareOptions[0])
         trace2 = ageBarGraph(country2["age"], compareOptions[1])
