@@ -9,6 +9,7 @@ from streamlit_folium import folium_static
 from folium.plugins import HeatMap
 import plotly.express as px
 from plotly.subplots import make_subplots
+import sklearn
 from sklearn import preprocessing
 from sklearn.preprocessing import MinMaxScaler
 
@@ -359,7 +360,7 @@ with st.expander("Compare"):
     if normalizeOption == "Yes":
 
         if (len(compareOptions) == 2):
-            
+
             st.warning("Note: Normalization is through min-max method - Graphs with few data types and minimal data will be impacted")
 
             # Obtain Data
