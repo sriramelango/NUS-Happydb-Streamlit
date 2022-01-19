@@ -296,7 +296,7 @@ with st.expander("Demographics"):
 with st.expander("Compare"):
     selectionOptions = pd.DataFrame(allDF["country"].unique()).dropna()
     compareOptions = st.multiselect("Select Two Countries to Compare", selectionOptions)
-    normalizeOption = st.selectbox("Do you want to normalize the data?", ["Yes","No"])
+    normalizeOption = st.selectbox("Do you want to normalize the data?", ["No","Yes"])
 
     if normalizeOption == "No":
 
@@ -359,6 +359,9 @@ with st.expander("Compare"):
     if normalizeOption == "Yes":
 
         if (len(compareOptions) == 2):
+            
+            st.warning("Note: Normalization is through min-max method - Graphs with few data types and minimal data will be impacted")
+
             # Obtain Data
             country1 = allDF[allDF["country"] == compareOptions[0]]
             country2 = allDF[allDF["country"] == compareOptions[1]]
