@@ -82,6 +82,11 @@ def nationBarGraph(nations):
     fig = px.bar(nationData, x="Nations",y="Frequency")
     st.plotly_chart(fig, use_container_width=True)
 
+def singaporeGraph(data, xLabel):
+    data = dataBarGraphProcess(data, xLabel, 'Frequency')
+    fig = px.bar(data, x= xLabel,y="Frequency")
+    st.plotly_chart(fig, use_container_width=True)
+
 def heatMap(data):
     # Resource intensive!
     map_heatmap = folium.Map(location=[0, 0], zoom_start=2.4)
@@ -164,7 +169,8 @@ def emotionBarGraph(data, name = "", norm = False):
 def conceptBarGraph(concepts, name = "", norm = False):
     conceptsArray = " "
     for index, values in concepts.items():
-        conceptsArray += values + " "
+        conceptsArray += str(values) + " "
+    conceptsArray = conceptsArray.lower()
     conceptsArray = conceptsArray.replace("|"," ")
     conceptsArray = pd.Series(conceptsArray.split())
     if norm == False:
@@ -224,37 +230,64 @@ def plotCharts(data):
 
 
 # Adds Functionality for Selecting Between All Data and Filtered Data
-def displayData(dataset, selection, selectionType):
+def displayData(dataset, selection, selectionType, singapore = False):
     if selectionType == "ALL":
-        plotCharts(dataset)
+        if singapore == False:
+            plotCharts(dataset)
+        else:
+            plotSingapore(dataset)
     else:
         data = dataset[dataset[selection] == selectionType]
-        plotCharts(data)
+        if singapore == False:
+            plotCharts(data)
+        else:
+            plotSingapore(data)
+
+def plotSingapore(data):
+     #Graphs 
+    st.subheader("Word Cloud")
+    genWordCloud(data["moment"])
+    st.subheader("Dataset")
+    st.write(data)
+    st.subheader("Frequency Graphs")
+    conceptBarGraph(data["concepts"])
+    singaporeGraph(data["age"], "Age")
+    singaporeGraph(data["race"], "Race")
+    singaporeGraph(data["gender"], "Gender")
+    durationBarGraph(data["duration"])
 
 
 # Functionality for User Selection in @Demographics Section
-def demographicAnalysis(optionDataset, optionDemographic):
+def demographicAnalysis(optionDataset, optionDemographic, singapore = False):
     if optionDemographic == "Country":
-        selectionOptions = pd.DataFrame(optionDataset["country"].unique()).dropna().append(["ALL"])
-        nation = st.selectbox("Where would you like to explore?", selectionOptions)
-        displayData(optionDataset, "country", nation)
-
+        if singapore == False:
+            selectionOptions = pd.DataFrame(optionDataset["country"].unique()).dropna().append(["ALL"])
+            nation = st.selectbox("Where would you like to explore?", selectionOptions)
+            displayData(optionDataset, "country", nation)
+        else:
+            plotSingapore(optionDataset)
+            
     if optionDemographic == "Age":
         selectionOptions = pd.DataFrame(optionDataset["age"].unique()).dropna().append(["ALL"])
         age = st.selectbox("What age would you like to explore?", selectionOptions)
-        displayData(optionDataset, "age", age)      
+        if singapore == False:
+            displayData(optionDataset, "age", age)      
+        else:
+            displayData(optionDataset, "age", age, True)
 
     if optionDemographic == "Gender":
-        selectionOptions = pd.DataFrame(trainingDF["gender"].unique()).dropna().append(["ALL"])
+        selectionOptions = pd.DataFrame(optionDataset["gender"].unique()).dropna().append(["ALL"])
         gender = st.selectbox("What gender would you like to explore?", selectionOptions)
-        displayData(optionDataset, "gender", gender)
+        if singapore == False:
+            displayData(optionDataset, "gender", gender)
+        else:
+            displayData(optionDataset, "gender", gender, True)
 
 
 # Obtain and Process Labeled Data
 trainingDF = normalizeData(pd.read_csv("./data/labeledDataTrain.csv"))
 testDF = normalizeData(pd.read_csv("./data/labeledDataTest.csv",sep=",",encoding = 'cp1252'))
 singaporeData = pd.read_csv("./data/sg_happydb_data_completecases.csv")
-#st.write(singaporeData)
 
 #Merge DataSets and Process Data
 testDF = testDF.reindex(columns=['hmid',"moment","concepts","agency","social","age","country","gender","married","parenthood","reflection","duration"])
@@ -285,7 +318,7 @@ with st.expander("Survey/Data Distribution"):
 
 with st.expander("Demographics"):
     st.header('Demographics')
-    optionDataSet = st.selectbox("What dataset would you like to explore?",("All", "Training","Test"))
+    optionDataSet = st.selectbox("What dataset would you like to explore?",("All", "Training","Test", "Singapore"))
     optionDemographic = st.selectbox("What demographic would you like to explore?",("Country","Age", "Gender"))
     if optionDataSet == "All":
         demographicAnalysis(allDF, optionDemographic)
@@ -293,6 +326,9 @@ with st.expander("Demographics"):
         demographicAnalysis(trainingDF, optionDemographic)
     if optionDataSet == "Test":
         demographicAnalysis(testDF, optionDemographic)
+    if optionDataSet == "Singapore":
+        demographicAnalysis(singaporeData, optionDemographic, True)
+
 
 with st.expander("Compare"):
     selectionOptions = pd.DataFrame(allDF["country"].unique()).dropna()
