@@ -253,8 +253,8 @@ def demographicAnalysis(optionDataset, optionDemographic):
 # Obtain and Process Labeled Data
 trainingDF = normalizeData(pd.read_csv("./data/labeledDataTrain.csv"))
 testDF = normalizeData(pd.read_csv("./data/labeledDataTest.csv",sep=",",encoding = 'cp1252'))
-#singaporeData = normalizeData(pd.read_csv("./data/sg_happydb_data_completecases.csv",sep=",",encoding = 'cp1252'))
-#st.write(singaporeData["age"])
+singaporeData = pd.read_csv("./data/sg_happydb_data_completecases.csv")
+#st.write(singaporeData)
 
 #Merge DataSets and Process Data
 testDF = testDF.reindex(columns=['hmid',"moment","concepts","agency","social","age","country","gender","married","parenthood","reflection","duration"])
