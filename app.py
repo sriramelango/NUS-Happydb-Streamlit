@@ -268,7 +268,7 @@ def displayData(dataset, selection, selectionType, singapore = False):
 
 #Singapore Data Analysis
 def plotSingapore(data):
-     #Graphs 
+    #Graphs 
     st.subheader("Word Cloud")
     genWordCloud(data["moment"])
     st.subheader("Dataset")
