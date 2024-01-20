@@ -230,14 +230,14 @@ def plotCharts(data):
 def demographicAnalysis(optionDataset, optionDemographic, singapore = False):
     if optionDemographic == "Country":
         if singapore == False:
-            selectionOptions = pd.DataFrame(optionDataset["country"].unique()).dropna().append(["ALL"])
+            selectionOptions = pd.DataFrame(optionDataset["country"].unique()).dropna()._append(["ALL"])
             nation = st.selectbox("Where would you like to explore?", selectionOptions)
             displayData(optionDataset, "country", nation)
         else:
             plotSingapore(optionDataset)
             
     if optionDemographic == "Age":
-        selectionOptions = pd.DataFrame(optionDataset["age"].unique()).dropna().append(["ALL"])
+        selectionOptions = pd.DataFrame(optionDataset["age"].unique()).dropna()._append(["ALL"])
         age = st.selectbox("What age would you like to explore?", selectionOptions)
         if singapore == False:
             displayData(optionDataset, "age", age)      
@@ -245,7 +245,7 @@ def demographicAnalysis(optionDataset, optionDemographic, singapore = False):
             displayData(optionDataset, "age", age, True)
 
     if optionDemographic == "Gender":
-        selectionOptions = pd.DataFrame(optionDataset["gender"].unique()).dropna().append(["ALL"])
+        selectionOptions = pd.DataFrame(optionDataset["gender"].unique()).dropna()._append(["ALL"])
         gender = st.selectbox("What gender would you like to explore?", selectionOptions)
         if singapore == False:
             displayData(optionDataset, "gender", gender)
@@ -349,7 +349,7 @@ with st.expander("Demographics"):
         demographicAnalysis(singaporeData, optionDemographic, True)
 
 with st.expander("Compare"):
-    selectionOptions = pd.DataFrame(allDF["country"].unique()).dropna().append(["SGP"])
+    selectionOptions = pd.DataFrame(allDF["country"].unique()).dropna()._append(["SGP"])
     compareOptions = st.multiselect("Select Two Countries to Compare", selectionOptions)
     normalizeOption = st.selectbox("Do you want to normalize the data?", ["No","Yes"])
 
