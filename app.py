@@ -13,7 +13,6 @@ import sklearn
 from sklearn import preprocessing
 from sklearn.preprocessing import MinMaxScaler
 
-
 # Set Page Options
 st.set_option('deprecation.showPyplotGlobalUse', False)
 st.set_page_config(layout = 'wide')
