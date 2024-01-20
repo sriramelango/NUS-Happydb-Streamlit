@@ -198,7 +198,7 @@ def genWordCloud(moments):
 #Plots all Data in Format
 def plotCharts(data):
     #Graphs 
-    st.subheader("Word Cloud")
+  #  st.subheader("Word Cloud")
     #genWordCloud(data["moment"])
     st.subheader("Dataset")
     st.write(data)
@@ -268,7 +268,7 @@ def displayData(dataset, selection, selectionType, singapore = False):
 #Singapore Data Analysis
 def plotSingapore(data):
     #Graphs 
-    st.subheader("Word Cloud")
+   # st.subheader("Word Cloud")
    # genWordCloud(data["moment"])
     st.subheader("Dataset")
     st.write(data)
