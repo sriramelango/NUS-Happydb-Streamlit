@@ -199,7 +199,7 @@ def genWordCloud(moments):
 def plotCharts(data):
     #Graphs 
     st.subheader("Word Cloud")
-    genWordCloud(data["moment"])
+    #genWordCloud(data["moment"])
     st.subheader("Dataset")
     st.write(data)
     st.subheader("Frequency Graphs")
@@ -269,7 +269,7 @@ def displayData(dataset, selection, selectionType, singapore = False):
 def plotSingapore(data):
     #Graphs 
     st.subheader("Word Cloud")
-    genWordCloud(data["moment"])
+   # genWordCloud(data["moment"])
     st.subheader("Dataset")
     st.write(data)
     st.subheader("Frequency Graphs")
